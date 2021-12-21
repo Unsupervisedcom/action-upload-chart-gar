@@ -40,20 +40,20 @@ Greet someone
 ### Example usage
 
 ```yaml
-on: [push]
-
+name: Upload Released Chart
+on:
+  release:
+    types:
+      - published
 jobs:
-  hello_world_job:
+  upload-chart-gar:
     runs-on: ubuntu-latest
-    name: A job to say hello
     steps:
-      - uses: actions/checkout@v2
-      - id: foo
-        uses: actions/hello-world-composite-action@v1
+      - name: Push Chart
+        uses: Unsupervisedcom/action-upload-chart-gar@v1
         with:
-          who-to-greet: "Mona the Octocat"
-      - run: echo random-number ${{ steps.foo.outputs.random-number }}
-        shell: bash
+          credentials-json: ${{ secrets.GOOGLE_ARTIFACT_READ_WRITE }}
+          project-id: ${{ secrets.GOOGLE_ARTIFACT_PROJECT_ID }}
 ```
 
 <!-- end examples -->
