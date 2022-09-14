@@ -27,6 +27,18 @@ inputs:
     description: 'the asset name containing the chart, must be a tar file'
     required: false
     default: 'chart.tgz'
+  sentry-auth-token:
+    description: 'Sentry auth token to facilitate sentry releases'
+    required: false
+    default: false
+  sentry-org-slug:
+    description: 'Sentry org name to facilitate sentry releases'
+    required: false
+    default: false
+  sentry-project-name:
+    description: 'Sentry project to update with release info'
+    required: false
+    default: false
 runs:
   using: "composite"
   steps:
@@ -37,6 +49,15 @@ runs:
         tag: ${{ inputs.tag }}
         fileName: ${{ inputs.release-asset-name }}
         token: ${{ inputs.token }}
+    - if: ${{ (inputs.sentry-auth-token != 'false') }}
+      name: sentry release
+      uses: getsentry/action-release@v1.1.6
+      env:
+        SENTRY_AUTH_TOKEN: ${{ inputs.sentry-auth-token }}
+        SENTRY_ORG: ${{ inputs.sentry-org-slug }}
+        SENTRY_PROJECT: ${{ inputs.sentry-project-name }}
+      with:
+        version: ${{ inputs.tag }}
     - id: auth
       uses: google-github-actions/auth@v0
       with:
